@@ -6,6 +6,9 @@ from . import models
 
 import pandas as pd
 
+def get_model_fields(model):
+	return model._meta.fields
+
 @csrf_exempt
 def upload(request):
 	if request.method == "POST":
@@ -62,16 +65,17 @@ def update(request, key):
 		try:
 			record = models.Record.objects.get(pk=key)
 			data = QueryDict(request.body).dict()
-			data["description"] = record.description
-			data["location"] = record.location
-			data["price"] = record.price
-			data["color"] = record.color
+			for field in get_model_fields(models.Record)[1:]:
+				field_name = field.verbose_name
+				if not data.get(field_name):
+					data[field_name] = getattr(record, field_name)
 			record = forms.RecordForm(data, instance=record)
 
 			if record.is_valid():
 				record.save()
 				return JsonResponse(data, safe=False)
 			else:
+				print(record.errors.as_data())
 				return JsonResponse({"error": "Invalid request"}, safe=False, status=400)
 		except models.Record.DoesNotExist:
 			return JsonResponse({"error": "Not Found"}, safe=False, status=404)
