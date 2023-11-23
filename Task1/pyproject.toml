@@ -1,0 +1,20 @@
+[project]
+name = ""
+version = ""
+description = ""
+authors = [
+    {name = "XZANATOL", email = "abdelrahmanbedox@gmail.com"},
+]
+dependencies = [
+    "django>=4.2.7",
+    "pandas>=2.0.3",
+    "openpyxl>=3.1.2",
+]
+requires-python = ">=3.8"
+readme = "README.md"
+license = {text = "MIT"}
+
+[tool.pdm.scripts]
+dev = {cmd = "python src/manage.py runserver"}
+makemigrations = {cmd = "python src/manage.py makemigrations"}
+migrate = {cmd = "python src/manage.py migrate"}
